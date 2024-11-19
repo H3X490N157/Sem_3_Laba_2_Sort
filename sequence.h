@@ -1,3 +1,6 @@
+#ifndef SEQUENCE_H
+#define SEQUENCE_H
+
 template <typename T>
 class Sequence {
 public:
@@ -11,3 +14,5 @@ public:
     virtual void Prepend(T item) = 0;
     virtual void InsertAt(T item, int index) = 0;
 };
+
+#endif // SEQUENCE_H
