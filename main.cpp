@@ -1,20 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <string>
 #include "ArraySequence.h" 
 #include "HeapSorter.h"    
 #include "ShellSorter.h"   
 #include "QuickSorter.h"   
 #include "ISorter.h"       
-
-// Функция для вывода последовательности
-template <typename T>
-void printSequence(const Sequence<T>* seq) {
-    for (int i = 0; i < seq->GetLength(); ++i) {
-        std::cout << seq->Get(i) << " ";
-    }
-    std::cout << "\n";
-}
+#include "printer.h"
+#include "comparator.h"
 
 template <typename T>
 void checkSorted(const Sequence<T>* seq) {
@@ -24,46 +18,39 @@ void checkSorted(const Sequence<T>* seq) {
     std::cout << "Успешно отсортировано\n";
 }
 
-template <typename T>
-int compare(const T& a, const T& b) {
-    if (a < b) return -1;
-    if (a > b) return 1;
-    return 0;
-}
-
 // Тестирование различных сортировок
 template <typename T>
 void testSorting(ISorter<T>& sorter, const char* sorterName) {
-    std::cout << "Testing " << sorterName << "...\n";
+    std::cout << "Проверка " << sorterName << "...\n";
 
     // Тест 1: Пустая последовательность
     ArraySequence<T> emptySequence;
     sorter.Sort(&emptySequence, compare);
     checkSorted(&emptySequence);
+    printSequence(&emptySequence);
 
-    // Тест 2: Одноэлементная последовательность
     ArraySequence<T> singleElementSequence;
     singleElementSequence.Append(42);
     sorter.Sort(&singleElementSequence, compare);
     checkSorted(&singleElementSequence);
+    printSequence(&singleElementSequence);
 
-    // Тест 3: Уже отсортированная последовательность
     ArraySequence<T> sortedSequence;
     sortedSequence.Append(1);
     sortedSequence.Append(2);
     sortedSequence.Append(3);
     sorter.Sort(&sortedSequence, compare);
     checkSorted(&sortedSequence);
+    printSequence(&sortedSequence);
 
-    // Тест 4: Обратная последовательность
     ArraySequence<T> reversedSequence;
     reversedSequence.Append(3);
     reversedSequence.Append(2);
     reversedSequence.Append(1);
     sorter.Sort(&reversedSequence, compare);
     checkSorted(&reversedSequence);
+    printSequence(&reversedSequence);
 
-    // Тест 5: Случайная последовательность
     ArraySequence<T> randomSequence;
     randomSequence.Append(10);
     randomSequence.Append(2);
@@ -72,25 +59,68 @@ void testSorting(ISorter<T>& sorter, const char* sorterName) {
     randomSequence.Append(3);
     randomSequence.Append(-2281337);
     sorter.Sort(&randomSequence, compare);
-    checkSorted(&randomSequence);\
-
-    ArraySequence<T> anotherSequence;
-    anotherSequence.Append('Wow');
-    anotherSequence.Append('I hate BTS');
-    sorter.Sort(&anotherSequence, compare);
-    checkSorted(&anotherSequence);
+    checkSorted(&randomSequence);
+    printSequence(&randomSequence);
 
 }
+
+// Тестирование строковых последовательностей
+void testSorting(ISorter<std::string>& sorter, const char* sorterName) {
+    std::cout << "Testing " << sorterName << " with strings...\n";
+
+    ArraySequence<std::string> emptySequence;
+    sorter.Sort(&emptySequence, compare<std::string>);
+    checkSorted(&emptySequence);
+    printSequence(&emptySequence);
+
+    ArraySequence<std::string> singleElementSequence;
+    singleElementSequence.Append("I am alone. HELLp");
+    sorter.Sort(&singleElementSequence, compare<std::string>);
+    checkSorted(&singleElementSequence);
+    printSequence(&singleElementSequence);
+
+    ArraySequence<std::string> reversedSequence;
+    reversedSequence.Append("Cherry");
+    reversedSequence.Append("Banana");
+    reversedSequence.Append("Apple");
+    sorter.Sort(&reversedSequence, compare<std::string>);
+    checkSorted(&reversedSequence);
+    printSequence(&reversedSequence);
+
+    ArraySequence<std::string> randomSequence;
+    randomSequence.Append("Zebra");
+    randomSequence.Append("Apple");
+    randomSequence.Append("Orange");
+    randomSequence.Append("Banana");
+    randomSequence.Append("Lemon");
+    randomSequence.Append("Берёзовый сок");
+    randomSequence.Append("Я не люблю BTS");
+    sorter.Sort(&randomSequence, compare<std::string>);
+    checkSorted(&randomSequence);
+    printSequence(&randomSequence);
+}
+
+
 
 int main() {
     HeapSorter<int> heapSorter;
     ShellSorter<int> shellSorter;
     QuickSorter<int> quickSorter;
 
+
+    HeapSorter<std::string> stringHeapSorter;
+    ShellSorter<std::string> stringShellSorter;
+    QuickSorter<std::string> stringQuickSorter;
+
     testSorting(heapSorter, "HeapSort");
     testSorting(shellSorter, "ShellSort");
     testSorting(quickSorter, "QuickSort");
 
-    std::cout << "All tests passed successfully!\n";
+
+    testSorting(stringHeapSorter, "HeapSort для строк");
+    testSorting(stringShellSorter, "ShellSort для строк");
+    testSorting(stringQuickSorter, "QuickSort для строк");
+
+    std::cout << "Тесты пройдены\n";
     return 0;
 }
