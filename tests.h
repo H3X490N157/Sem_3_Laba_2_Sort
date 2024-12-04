@@ -1,15 +1,133 @@
-#include <iostream>
-#include <string>
-
-#include "ArraySequence.h"
-#include "ShellSorter.h"
-#include "HeapSorter.h"
-#include "QuickSorter.h"
-
-/*void PrintSequence(ArraySequence<int>& seq, const std::string& title) {
-    std::cout << "\n" << title << ":\n";
-    for (int i = 0; i < seq.GetLength(); ++i) {
-        std::cout << seq.Get(i) << " ";
+template <typename T>
+void checkSorted(const Sequence<T>* seq) {
+    for (int i = 1; i < seq->GetLength(); ++i) {
+        assert(seq->Get(i-1) <= seq->Get(i) && "Ошибка сортировки!");
     }
-    std::cout << "\n";
-}*/
+    std::cout << "Успешно отсортировано\n";
+}
+
+
+template <typename T>
+void testSorting(ISorter<T>& sorter, const char* sorterName) {
+    std::cout << "Проверка " << sorterName << "...\n";
+
+    ArraySequence<T> emptySequence;
+    sorter.Sort(&emptySequence, compare);
+    checkSorted(&emptySequence);
+    printSequence(&emptySequence);
+
+    ArraySequence<T> singleElementSequence;
+    singleElementSequence.Append(42);
+    sorter.Sort(&singleElementSequence, compare);
+    checkSorted(&singleElementSequence);
+    printSequence(&singleElementSequence);
+
+    ArraySequence<T> sortedSequence;
+    sortedSequence.Append(1);
+    sortedSequence.Append(2);
+    sortedSequence.Append(3);
+    sorter.Sort(&sortedSequence, compare);
+    checkSorted(&sortedSequence);
+    printSequence(&sortedSequence);
+
+    ArraySequence<T> reversedSequence;
+    reversedSequence.Append(3);
+    reversedSequence.Append(2);
+    reversedSequence.Append(1);
+    sorter.Sort(&reversedSequence, compare);
+    checkSorted(&reversedSequence);
+    printSequence(&reversedSequence);
+
+    ArraySequence<T> randomSequence;
+    randomSequence.Append(10);
+    randomSequence.Append(2);
+    randomSequence.Append(8);
+    randomSequence.Append(5);
+    randomSequence.Append(3);
+    randomSequence.Append(-2281337);
+    sorter.Sort(&randomSequence, compare);
+    checkSorted(&randomSequence);
+    printSequence(&randomSequence);
+
+}
+
+
+void testSorting(ISorter<std::string>& sorter, const char* sorterName) {
+    std::cout << "Testing " << sorterName << " with strings...\n";
+
+    ArraySequence<std::string> emptySequence;
+    sorter.Sort(&emptySequence, compare<std::string>);
+    checkSorted(&emptySequence);
+    printSequence(&emptySequence);
+
+    ArraySequence<std::string> singleElementSequence;
+    singleElementSequence.Append("I am alone. HELLp");
+    sorter.Sort(&singleElementSequence, compare<std::string>);
+    checkSorted(&singleElementSequence);
+    printSequence(&singleElementSequence);
+
+    ArraySequence<std::string> reversedSequence;
+    reversedSequence.Append("Cherry");
+    reversedSequence.Append("Banana");
+    reversedSequence.Append("Apple");
+    sorter.Sort(&reversedSequence, compare<std::string>);
+    checkSorted(&reversedSequence);
+    printSequence(&reversedSequence);
+
+    ArraySequence<std::string> randomSequence;
+    randomSequence.Append("Zebra");
+    randomSequence.Append("Apple");
+    randomSequence.Append("Orange");
+    randomSequence.Append("Banana");
+    randomSequence.Append("Lemon");
+    randomSequence.Append("Берёзовый сок");
+    randomSequence.Append("Я не люблю BTS");
+    sorter.Sort(&randomSequence, compare<std::string>);
+    checkSorted(&randomSequence);
+    printSequence(&randomSequence);
+}
+
+
+template <typename T>
+void testUserSorting(ISorter<T>& sorter) {
+    ArraySequence<T> sequence_test;
+    T x;
+
+    std::cout << "Введите элементы последовательности (введите 0 для завершения ввода):\n";
+    while (true) {
+        std::cin >> x;
+        if (x == 0) break;
+        sequence_test.Append(x);
+    }
+
+    std::cout << "Исходная последовательность:\n";
+    printSequence(&sequence_test);
+
+    sorter.Sort(&sequence_test, compare<T>);
+    std::cout << "Отсортированная последовательность:\n";
+    printSequence(&sequence_test);
+
+    checkSorted(&sequence_test);
+}
+
+void testUserSortingString(ISorter<std::string>& sorter) {
+    ArraySequence<std::string> sequence_test;
+    std::string input;
+
+    std::cout << "Введите строки для сортировки (введите пустую строку для завершения ввода):\n";
+    std::cin.ignore(); // Очистка потока
+    while (true) {
+        std::getline(std::cin, input);
+        if (input.empty()) break;
+        sequence_test.Append(input);
+    }
+
+    std::cout << "Исходная последовательность:\n";
+    printSequence(&sequence_test);
+
+    sorter.Sort(&sequence_test, compare<std::string>);
+    std::cout << "Отсортированная последовательность:\n";
+    printSequence(&sequence_test);
+
+    checkSorted(&sequence_test);
+}
