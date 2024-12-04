@@ -1,6 +1,7 @@
 #include "sequence.h"
 #include <stdexcept>
 #include <iostream>
+#pragma once
 
 template <typename T>
 class ArraySequence : public Sequence<T> {
@@ -23,7 +24,25 @@ public:
     ArraySequence() : data(nullptr), size(0), capacity(0) {}
 
     ~ArraySequence() {
-        delete[] data;
+    delete[] this->data;  
+}
+    ArraySequence(const ArraySequence& other) {
+        this->size = other.size;
+        this->data = new T[other.size]; 
+        for (int i = 0; i < other.size; ++i) {
+            this->data[i] = other.data[i];
+        }
+}
+
+    ArraySequence& operator=(const ArraySequence& other) {
+        if (this == &other) return *this;  // Проверка на самоприсваивание
+        delete[] this->data;               // Освобождаем текущую память
+        this->size = other.size;
+        this->data = new T[other.size];
+        for (int i = 0; i < other.size; ++i) {
+            this->data[i] = other.data[i];
+        }
+        return *this;
     }
 
     T& GetFirst() override {
@@ -36,7 +55,7 @@ public:
         return data[size - 1];
     }
 
-    T& Get(int index) override {
+    T& Get(int index) const override {
         if (index < 0 || index >= size) throw std::out_of_range("Некорректный индекс");
         return data[index];
     }
@@ -45,7 +64,7 @@ public:
         return Get(index);
     }
 
-    int GetLength() override {
+    int GetLength() const override {
         return size;
     }
 

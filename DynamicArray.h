@@ -101,16 +101,16 @@ public:
 
     T& operator[](int index){
         if(size <= index)
-            throw std::out_of_range("Не");
+            throw std::out_of_range("Слишком малая размерность");
         if(size <= 0) 
-            throw std::out_of_range("Getter call in empty collection");
+            throw std::out_of_range("Слишком малая размерность");
         return elements[index];
     }
     const T& operator[](int index) const{
         if(size <= index)
             throw std::out_of_range("Некорректный индекс");
         if(size <= 0) 
-            throw std::out_of_range("Getter call in empty collection");
+            throw std::out_of_range("Слишком малая размерность");
         return elements[index];
     }
     bool operator==(const DynamicArray<T>& array){

@@ -1,70 +1,96 @@
 #include <iostream>
-#include "ArraySequence.h"
-#include "ShellSorter.h"
-#include "BatchSorter.h"
-#include "QuickSorter.h"
+#include <vector>
+#include <cassert>
+#include "ArraySequence.h" 
+#include "HeapSorter.h"    
+#include "ShellSorter.h"   
+#include "QuickSorter.h"   
+#include "ISorter.h"       
 
-struct Person {
-    std::string name;
-    double height;
-
-    friend std::ostream& operator<<(std::ostream& os, const Person& p) {
-        os << p.name << " (" << p.height << " cm)";
-        return os;
+// Функция для вывода последовательности
+template <typename T>
+void printSequence(const Sequence<T>* seq) {
+    for (int i = 0; i < seq->GetLength(); ++i) {
+        std::cout << seq->Get(i) << " ";
     }
-};
-
-int CompareByHeight(const Person& p1, const Person& p2) {
-    if (p1.height < p2.height) return -1; // p1 меньше p2
-    if (p1.height > p2.height) return 1;  // p1 больше p2
-    return 0;                             // p1 и p2 равны
+    std::cout << "\n";
 }
 
-// Обёртка для приведения типов (принимает по значению, как требует Sort)
-int CompareByHeightWrapper(const Person& a, const Person& b) {
-    return CompareByHeight(a, b);
+template <typename T>
+void checkSorted(const Sequence<T>* seq) {
+    for (int i = 1; i < seq->GetLength(); ++i) {
+        assert(seq->Get(i-1) <= seq->Get(i) && "Ошибка сортировки!");
+    }
+    std::cout << "Успешно отсортировано\n";
 }
 
+template <typename T>
+int compare(const T& a, const T& b) {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+}
+
+// Тестирование различных сортировок
+template <typename T>
+void testSorting(ISorter<T>& sorter, const char* sorterName) {
+    std::cout << "Testing " << sorterName << "...\n";
+
+    // Тест 1: Пустая последовательность
+    ArraySequence<T> emptySequence;
+    sorter.Sort(&emptySequence, compare);
+    checkSorted(&emptySequence);
+
+    // Тест 2: Одноэлементная последовательность
+    ArraySequence<T> singleElementSequence;
+    singleElementSequence.Append(42);
+    sorter.Sort(&singleElementSequence, compare);
+    checkSorted(&singleElementSequence);
+
+    // Тест 3: Уже отсортированная последовательность
+    ArraySequence<T> sortedSequence;
+    sortedSequence.Append(1);
+    sortedSequence.Append(2);
+    sortedSequence.Append(3);
+    sorter.Sort(&sortedSequence, compare);
+    checkSorted(&sortedSequence);
+
+    // Тест 4: Обратная последовательность
+    ArraySequence<T> reversedSequence;
+    reversedSequence.Append(3);
+    reversedSequence.Append(2);
+    reversedSequence.Append(1);
+    sorter.Sort(&reversedSequence, compare);
+    checkSorted(&reversedSequence);
+
+    // Тест 5: Случайная последовательность
+    ArraySequence<T> randomSequence;
+    randomSequence.Append(10);
+    randomSequence.Append(2);
+    randomSequence.Append(8);
+    randomSequence.Append(5);
+    randomSequence.Append(3);
+    randomSequence.Append(-2281337);
+    sorter.Sort(&randomSequence, compare);
+    checkSorted(&randomSequence);\
+
+    ArraySequence<T> anotherSequence;
+    anotherSequence.Append('Wow');
+    anotherSequence.Append('I hate BTS');
+    sorter.Sort(&anotherSequence, compare);
+    checkSorted(&anotherSequence);
+
+}
 
 int main() {
-    ArraySequence<Person> people;
-    people.Append({"Alice", 165.5});
-    people.Append({"Bob", 175.0});
-    people.Append({"Charlie", 160.0});
-    people.Append({"Dave", 180.0});
+    HeapSorter<int> heapSorter;
+    ShellSorter<int> shellSorter;
+    QuickSorter<int> quickSorter;
 
-    // Вывод исходных данных
-    std::cout << "Original data:\n";
-    for (int i = 0; i < people.GetLength(); ++i) {
-        std::cout << people.Get(i) << "\n";
-    }
+    testSorting(heapSorter, "HeapSort");
+    testSorting(shellSorter, "ShellSort");
+    testSorting(quickSorter, "QuickSort");
 
-    // Сортировка QuickSort
-    QuickSorter<Person> quickSorter;
-    ArraySequence<Person> quickSortedPeople = people; // Создаем копию
-    quickSorter.Sort(&quickSortedPeople, CompareByHeightWrapper);
-    std::cout << "\nQuick Sort:\n";
-    for (int i = 0; i < quickSortedPeople.GetLength(); ++i) {
-        std::cout << quickSortedPeople.Get(i) << "\n";
-    }
-
-    // Сортировка ShellSort
-    ShellSorter<Person> shellSorter;
-    ArraySequence<Person> shellSortedPeople = people; // Создаем копию
-    shellSorter.Sort(&shellSortedPeople, CompareByHeightWrapper);
-    std::cout << "\nShell Sort:\n";
-    for (int i = 0; i < shellSortedPeople.GetLength(); ++i) {
-        std::cout << shellSortedPeople.Get(i) << "\n";
-    }
-
-    // Сортировка BatcherSort
-    BatchSorter<Person> batchSorter;
-    ArraySequence<Person> batchSortedPeople = people; // Создаем копию
-    batchSorter.Sort(&batchSortedPeople, CompareByHeightWrapper);
-    std::cout << "\nBatcher Sort:\n";
-    for (int i = 0; i < batchSortedPeople.GetLength(); ++i) {
-        std::cout << batchSortedPeople.Get(i) << "\n";
-    }
-
+    std::cout << "All tests passed successfully!\n";
     return 0;
 }
