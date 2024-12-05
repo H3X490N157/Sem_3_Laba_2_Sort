@@ -1,3 +1,7 @@
+#include "person.h"
+#include "csv_writer.h"
+
+
 template <typename T>
 void checkSorted(const Sequence<T>* seq) {
     for (int i = 1; i < seq->GetLength(); ++i) {
@@ -5,6 +9,8 @@ void checkSorted(const Sequence<T>* seq) {
     }
     std::cout << "Успешно отсортировано\n";
 }
+
+
 
 
 template <typename T>
@@ -130,4 +136,43 @@ void testUserSortingString(ISorter<std::string>& sorter) {
     printSequence(&sequence_test);
 
     checkSorted(&sequence_test);
+}
+
+void testPersonSorting() {
+    std::vector<Person> persons = readPersonsFromFile("persons.csv");
+    if (persons.empty()) {
+        std::cerr << "Нет данных для теста." << std::endl;
+        return;
+    }
+
+
+    ArraySequence<Person> personSequence;
+    for (const auto& person : persons) {
+        personSequence.Append(person);
+    }
+
+    HeapSorter<Person> heapSorter;
+    ShellSorter<Person> shellSorter;
+    QuickSorter<Person> quickSorter;
+
+    std::cout << "Исходные данные:\n";
+    printSequence(&personSequence);
+
+    heapSorter.Sort(&personSequence, comparePersons);
+    shellSorter.Sort(&personSequence, comparePersons);
+    quickSorter.Sort(&personSequence, comparePersons);
+
+    std::cout << "После сортировки (HeapSort):\n";
+    checkSorted(&personSequence);
+    printSequence(&personSequence);
+
+    std::cout << "После сортировки (ShellSort):\n";
+    checkSorted(&personSequence);
+    printSequence(&personSequence);
+
+    std::cout << "После сортировки (QuickSort):\n";
+    checkSorted(&personSequence);
+    printSequence(&personSequence);
+
+    writeResultsToCSV(personSequence, "results.csv");
 }
