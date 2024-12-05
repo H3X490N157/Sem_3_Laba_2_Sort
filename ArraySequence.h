@@ -35,8 +35,8 @@ public:
 }
 
     ArraySequence& operator=(const ArraySequence& other) {
-        if (this == &other) return *this;  // Проверка на самоприсваивание
-        delete[] this->data;               // Освобождаем текущую память
+        if (this == &other) return *this; 
+        delete[] this->data;           
         this->size = other.size;
         this->data = new T[other.size];
         for (int i = 0; i < other.size; ++i) {

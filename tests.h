@@ -1,3 +1,5 @@
+#include <chrono>
+#include <iomanip>
 #include "person.h"
 #include "csv_writer.h"
 
@@ -138,13 +140,22 @@ void testUserSortingString(ISorter<std::string>& sorter) {
     checkSorted(&sequence_test);
 }
 
+template <typename T>
+void measureSortingTime(ISorter<T>& sorter, ArraySequence<T>& sequence, const std::string& algorithmName) {
+    auto start = std::chrono::high_resolution_clock::now();
+    sorter.Sort(&sequence, comparePersons);  // Сортировка
+    auto end = std::chrono::high_resolution_clock::now();
+    
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << algorithmName << " завершен за " << duration.count() << " миллисекунд.\n";
+}
+
 void testPersonSorting() {
     std::vector<Person> persons = readPersonsFromFile("persons.csv");
     if (persons.empty()) {
         std::cerr << "Нет данных для теста." << std::endl;
         return;
     }
-
 
     ArraySequence<Person> personSequence;
     for (const auto& person : persons) {
@@ -155,24 +166,17 @@ void testPersonSorting() {
     ShellSorter<Person> shellSorter;
     QuickSorter<Person> quickSorter;
 
-    std::cout << "Исходные данные:\n";
-    printSequence(&personSequence);
 
-    heapSorter.Sort(&personSequence, comparePersons);
-    shellSorter.Sort(&personSequence, comparePersons);
-    quickSorter.Sort(&personSequence, comparePersons);
+    ArraySequence<Person> personSequenceForHeapSort = personSequence;  
+    measureSortingTime(heapSorter, personSequenceForHeapSort, "HeapSort");
 
-    std::cout << "После сортировки (HeapSort):\n";
-    checkSorted(&personSequence);
-    printSequence(&personSequence);
+    ArraySequence<Person> personSequenceForShellSort = personSequence;  
+    measureSortingTime(shellSorter, personSequenceForShellSort, "ShellSort");
 
-    std::cout << "После сортировки (ShellSort):\n";
-    checkSorted(&personSequence);
-    printSequence(&personSequence);
+    ArraySequence<Person> personSequenceForQuickSort = personSequence; 
+    measureSortingTime(quickSorter, personSequenceForQuickSort, "QuickSort");
 
-    std::cout << "После сортировки (QuickSort):\n";
-    checkSorted(&personSequence);
-    printSequence(&personSequence);
+    writeResultsToCSV(personSequenceForQuickSort, "results.csv");
 
-    writeResultsToCSV(personSequence, "results.csv");
+    std::cout << "Тестирование завершено.\n";
 }

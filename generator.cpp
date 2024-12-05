@@ -42,7 +42,7 @@ int main() {
     std::random_device rd;
     std::mt19937 rng(rd());
     std::uniform_int_distribution<int> yearDist(1950, 2023);
-    std::uniform_real_distribution<double> heightDist(1.5, 2.2);
+    std::uniform_real_distribution<double> heightDist(1.5, 2.28);
     std::uniform_real_distribution<double> weightDist(50.0, 120.0);
 
     std::cout << "Введите количество элементов";
