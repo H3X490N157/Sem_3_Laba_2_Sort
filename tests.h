@@ -13,8 +13,6 @@ void checkSorted(const Sequence<T>* seq) {
 }
 
 
-
-
 template <typename T>
 void testSorting(ISorter<T>& sorter, const char* sorterName) {
     std::cout << "Проверка " << sorterName << "...\n";

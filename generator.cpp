@@ -14,7 +14,7 @@ struct Person {
 
 
 std::vector<std::string> russianFirstNames = {
-    "Алексей", "Иван", "Дмитрий", "Максим", "Никита", "Придурочный", "Чувак", "Четтер"
+    "Алексей", "Иван", "Дмитрий", "Максим", "Никита", "Придурочный", "Чувак", "Четтер", "Николай", "Егор", "ЫЫЫЫ"
 };
 std::vector<std::string> russianLastNames = {
     "Иванов", "Петров", "Сидоров", "Кузнецов", "Попов", "Смирнов", "Васильев", "Новиков", "Морозов", "Фёдоров", "Йоу", "Человек"
@@ -35,7 +35,7 @@ std::string getRandomElement(const std::vector<std::string>& list, std::mt19937&
 int main() {
     std::ofstream outFile("persons.csv");
     if (!outFile.is_open()) {
-        std::cerr << "Error opening file for writing!" << std::endl;
+        std::cerr << "Ошибка открытия файла" << std::endl;
         return 1;
     }
 
@@ -61,7 +61,7 @@ int main() {
     }
 
     outFile.close();
-    std::cout << "Сгенерированы элементы в 'persons.csv'" << std::endl;
+    std::cout << "Сгенерированы элементы в 'persons.csv" << std::endl;
 
     return 0;
 }
