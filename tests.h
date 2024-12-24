@@ -178,3 +178,44 @@ void testPersonSorting() {
 
     std::cout << "Тестирование завершено.\n";
 }
+
+void testUserSortingPersons(ISorter<Person>& sorter) {
+    std::cout << "Выберите способ ввода данных: (1 - вручную, 2 - файл): ";
+    int inputChoice;
+    std::cin >> inputChoice;
+    ArraySequence<Person> persons;
+    if (inputChoice == 1) {
+        std::cout << "Введите количество записей: ";
+        int n;
+        std::cin >> n;
+        std::cout << "Вводите данные в формате: Имя Фамилия Год_Рождения Рост Вес\n";
+        while (n--) {
+            std::string firstName, lastName;
+            int birthYear;
+            double height, weight;
+            std::cin >> firstName >> lastName >> birthYear >> height >> weight;
+            persons.Append({firstName, lastName, birthYear, height, weight});
+        }
+    } else {
+        std::cout << "Введите имя файла с данными о людях (CSV: Имя,Фамилия,ГодРождения,Рост,Вес): ";
+        std::string filename;
+        std::cin >> filename;
+        std::vector<Person> vectorPersons = readPersonsFromFile(filename);
+        for (const auto& person : vectorPersons) {
+            persons.Append(person);
+        }
+    }
+    std::cout << "Сортировка началась...\n";
+    sorter.Sort(&persons, comparePersons);
+
+    // Вывод результата
+    std::cout << "Сортировка завершена. Результат:\n";
+    for (int i = 0; i < persons.GetLength(); ++i) {
+        const Person& person = persons.Get(i);
+        std::cout << person.GetFirstName() << " "
+                  << person.GetLastName() << ", "
+                  << person.GetBirthYear() << ", "
+                  << person.GetHeight() << "m, "
+                  << person.GetWeight() << "kg" << std::endl;
+    }
+}

@@ -13,6 +13,7 @@
 
 
 
+
 int main() {
     char c = '1';
     std::cout << "Введите 1 для запуска тестов. Введите 2 для пользовательского ввода. 3 для тестирования структур. Любая другая клавиша завершает программу.\n";
@@ -39,7 +40,7 @@ int main() {
             std::cout << "Тесты завершены.\n";
         } else if (c == '2') {
             char cc = '1';
-            std::cout << "Выберите тип данных: 1 - Числа, 2 - Строки.\n";
+            std::cout << "Выберите тип данных: 1 - Числа, 2 - Строки. 3 - Person\n";
             std::cin >> cc;
 
             if (cc == '1') {
@@ -70,7 +71,24 @@ int main() {
                     QuickSorter<std::string> stringQuickSorter;
                     testUserSortingString(stringQuickSorter);
                 }
-            } else {
+            }
+            else if (cc == '3') {
+                std::cout << "Выберите алгоритм сортировки: 1 - HeapSort, 2 - ShellSort, иначе - QuickSort.\n";
+                std::cin >> cc;
+                if (cc == '1') {
+                    HeapSorter<Person> personHeapSorter;
+                    testUserSortingPersons(personHeapSorter);
+                    }
+                else if (cc == '2') {
+                    ShellSorter<Person> personShellSorter;
+                    testUserSortingPersons(personShellSorter);
+                    } 
+                else {
+                    QuickSorter<Person> personQuickSorter;
+                    testUserSortingPersons(personQuickSorter);
+                }
+            }
+            else {
                 std::cout << "Неверный ввод. Возврат в главное меню.\n";
             }
         } else if (c == '3') {

@@ -12,12 +12,21 @@ struct Person {
     double height;
     double weight;
 
+
+
     friend std::ostream& operator<<(std::ostream& os, const Person& p) {
         os << p.firstName << " " << p.lastName << ", " 
            << p.birthYear << ", " << p.height << " m, " 
            << p.weight << " kg";
         return os;
     }
+
+    const std::string& GetFirstName() const { return firstName; }
+    const std::string& GetLastName() const { return lastName; }
+    int GetBirthYear() const { return birthYear; }
+    double GetHeight() const { return height; }
+    double getHeight() const { return height; }
+    double GetWeight() const { return weight; }
 
     bool operator<=(const Person& other) const {
         if (firstName != other.firstName)
@@ -30,6 +39,19 @@ struct Person {
             return height < other.height;
         return weight <= other.weight;
     }
+
+    bool operator<(const Person& other) const {
+        if (firstName != other.firstName)
+            return firstName < other.firstName;
+        if (lastName != other.lastName)
+            return lastName < other.lastName;
+        if (birthYear != other.birthYear)
+            return birthYear < other.birthYear;
+        if (height != other.height)
+            return height < other.height;
+        return weight < other.weight;
+    }
+    
 };
 
 
